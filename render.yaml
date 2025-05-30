@@ -10,11 +10,13 @@ services:
       ./configure --prefix=/usr
       make
       sudo make install
+      sudo ldconfig
       cd ..
       rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
-      export LD_LIBRARY_PATH=/usr/lib:$LD_LIBRARY_PATH
-      export C_INCLUDE_PATH=/usr/include:$C_INCLUDE_PATH
-      export CPLUS_INCLUDE_PATH=/usr/include:$CPLUS_INCLUDE_PATH
+      export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH
+      export C_INCLUDE_PATH=/usr/include:/usr/local/include:$C_INCLUDE_PATH
+      export CPLUS_INCLUDE_PATH=/usr/include:/usr/local/include:$CPLUS_INCLUDE_PATH
+      export LIBRARY_PATH=/usr/lib:/usr/local/lib:$LIBRARY_PATH
       pip install -r requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
@@ -23,11 +25,13 @@ services:
       - key: PORT
         value: 8000
       - key: LD_LIBRARY_PATH
-        value: /usr/lib:$LD_LIBRARY_PATH
+        value: /usr/lib:/usr/local/lib:$LD_LIBRARY_PATH
       - key: C_INCLUDE_PATH
-        value: /usr/include:$C_INCLUDE_PATH
+        value: /usr/include:/usr/local/include:$C_INCLUDE_PATH
       - key: CPLUS_INCLUDE_PATH
-        value: /usr/include:$CPLUS_INCLUDE_PATH
+        value: /usr/include:/usr/local/include:$CPLUS_INCLUDE_PATH
+      - key: LIBRARY_PATH
+        value: /usr/lib:/usr/local/lib:$LIBRARY_PATH
 
   # سرویس فرانت‌اند
   - type: web
