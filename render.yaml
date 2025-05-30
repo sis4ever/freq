@@ -3,13 +3,25 @@ services:
   - type: web
     name: freqtrade-backend
     env: python
-    buildCommand: pip install -r requirements.txt
+    buildCommand: |
+      wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
+      tar -xzf ta-lib-0.4.0-src.tar.gz
+      cd ta-lib/
+      ./configure --prefix=/opt/render/project/src
+      make
+      make install
+      cd ..
+      rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
+      export LD_LIBRARY_PATH=/opt/render/project/src/lib:$LD_LIBRARY_PATH
+      pip install -r requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.8
       - key: PORT
         value: 8000
+      - key: LD_LIBRARY_PATH
+        value: /opt/render/project/src/lib:$LD_LIBRARY_PATH
 
   # سرویس فرانت‌اند
   - type: web
