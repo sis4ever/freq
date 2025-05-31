@@ -4,8 +4,12 @@ services:
     name: freqtrade-backend
     env: python
     buildCommand: |
+      # نصب وابستگی‌های سیستمی
       sudo apt-get update
-      sudo apt-get install -y build-essential wget
+      sudo apt-get install -y build-essential wget git pkg-config
+      
+      # نصب TA-Lib
+      cd /tmp
       wget http://prdownloads.sourceforge.net/ta-lib/ta-lib-0.4.0-src.tar.gz
       tar -xzf ta-lib-0.4.0-src.tar.gz
       cd ta-lib/
@@ -13,13 +17,17 @@ services:
       make
       sudo make install
       sudo ldconfig
-      cd ..
-      rm -rf ta-lib ta-lib-0.4.0-src.tar.gz
+      cd /opt/render/project/src
+      
+      # تنظیم متغیرهای محیطی
       export LD_LIBRARY_PATH=/usr/lib:/usr/local/lib:$LD_LIBRARY_PATH
       export C_INCLUDE_PATH=/usr/include:/usr/local/include:$C_INCLUDE_PATH
       export CPLUS_INCLUDE_PATH=/usr/include:/usr/local/include:$CPLUS_INCLUDE_PATH
       export LIBRARY_PATH=/usr/lib:/usr/local/lib:$LIBRARY_PATH
-      pip install --upgrade pip
+      
+      # به‌روزرسانی pip و نصب وابستگی‌ها
+      pip install --upgrade pip setuptools wheel
+      pip install numpy
       pip install -r requirements.txt
     startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
